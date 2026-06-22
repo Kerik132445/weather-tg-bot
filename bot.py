@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 import sys
@@ -9,9 +10,10 @@ from aiogram.filters import or_f
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
-from aiogram.enums import ParseMode
+from dotenv import load_dotenv
 
-TOKEN = "8761688747:AAGZ-JY7LhBatFgclLRX2ZbNuS5OdtemE1I"
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
