@@ -1,5 +1,3 @@
-"""uvicorn main:app --reload"""
-
 from fastapi import FastAPI, HTTPException, Depends
 import httpx
 from contextlib import asynccontextmanager

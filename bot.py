@@ -13,7 +13,7 @@ from aiogram.fsm.context import FSMContext
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = str(os.getenv("BOT_TOKEN"))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
