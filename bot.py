@@ -147,7 +147,8 @@ async def get_any_city_weather(message: Message, state: FSMContext):
     await state.clear()
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://127.0.0.1:8000/weather?city={city_args}")
+        payload = {"title": city_args}
+        response = await client.post(f"http://127.0.0.1:8000/weather", json=payload)
 
         if response.status_code == 200:
             data = response.json()

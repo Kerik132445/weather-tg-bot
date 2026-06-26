@@ -1,8 +1,14 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 import httpx
 from contextlib import asynccontextmanager
 # импорт всех функций из бд
 from database import init_db, add_favorite_cities, get_favorite_cities, delete_favorite_cities
+from schemas import City
+from schemas import WeatherResponse
+
+load_dotenv()
 
 
 @asynccontextmanager
@@ -49,11 +55,12 @@ def get_temp_emoji(temp_text):
         return ('🔥')
 
 
-@app.get("/weather")
+@app.post("/weather", response_model=WeatherResponse)
 # самый сок. бот сюда стучит, а он делает запрос в Weather api, забирает данные, упаковывает в json и отдает боту
-async def get_city(city: str):
-    API_KEY = "fd5562ea66f04ba1b82114340261406"
+async def get_city(city_data: City):
+    API_KEY = os.getenv("WEATHER_API_KEY")
 
+    city = city_data.title
     url = f"https://api.weatherapi.com/v1/current.json?key={API_KEY}&q={city}&lang=ru"
 
     async with httpx.AsyncClient() as client:
@@ -78,7 +85,7 @@ async def adding_fav_cities(city: str):
 
     # эндпоинт для добавления города в избранное.
     # проверяет есть ли такой город, и если все норм, то то записывает в бд
-    await get_city(city=city)
+    await get_city(city_data=City(title=city))
 
     await add_favorite_cities(city_name=city)
 
@@ -93,7 +100,7 @@ async def getting_fav_cities():
 
     for city in clean_raw:
 
-        city_weather = await get_city(city=city)
+        city_weather = await get_city(city_data=City(title=city))
         weather_data.append({
             "city": city,
             "temp": city_weather["temperature"],
